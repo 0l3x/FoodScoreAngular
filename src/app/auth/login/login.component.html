@@ -1,0 +1,33 @@
+<div class="container">
+    <form action="#" id="form-login" class="mt-4" method="POST" role="form">
+      <legend>Bienvenido a FoodScore!</legend>
+  
+      <div class="mb-3">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          class="form-control"
+          name="email"
+          id="email"
+          placeholder="Email"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password">Contraseña:</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          id="password"
+          placeholder="Contraseña"
+          required
+        />
+      </div>
+      <p class="text-danger" id="errorInfo"></p>
+      <button type="submit" [routerLink]="['/restaurants']" class="btn btn-primary">
+            Login
+      </button>
+    </form>
+  </div>
+  

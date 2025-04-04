@@ -1,0 +1,36 @@
+<nav class="navbar navbar-light bg-light justify-content-between mt-3">
+  <div class="col-auto ms-3">
+    <input
+      type="checkbox"
+      class="btn-check"
+      id="show-open"
+      [(ngModel)]="onlyOpen"
+    />
+    <label class="btn btn-outline-primary" for="show-open">Show open</label>
+  </div>
+  <form class="container-fluid mb-0 col">
+    <input
+      class="form-control"
+      type="text"
+      name="search"
+      placeholder="Filtrar"
+      aria-label="Search"
+      [(ngModel)]="search"
+    />
+  </form>
+</nav>
+
+<div
+  id="placesContainer"
+  class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
+>
+  @for (restaurant of filteredRestaurants(); track $index) {
+  <!-- Aún no tenemos id -->
+  <restaurant-card
+    [restaurant]="restaurant"
+    (deleted)="deleteRestaurant(restaurant)"
+    class="col"
+  >
+  </restaurant-card>
+  }
+</div>

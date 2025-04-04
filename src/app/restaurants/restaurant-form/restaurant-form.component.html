@@ -1,0 +1,110 @@
+<form class="mt-4" (ngSubmit)="addRestaurant()" [formGroup]="restaurantForm">
+  <div class="mb-3">
+    <label for="name">Nombre</label>
+    <input
+      type="text"
+      class="form-control"
+      name="name"
+      id="name"
+      placeholder="Introduce el nombre"
+      formControlName="name"
+      [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+    />
+    @let name = restaurantForm.controls.name;
+    @if(name.errors?.['required']) {
+      <div class="invalid-feedback">El nombre es obligatorio</div>
+    } @if(name.errors?.['pattern']) {
+      <div class="invalid-feedback">Solo puede contener letras y espacios</div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="description">Descripción</label>
+    <textarea
+      class="form-control"
+      id="description"
+      name="description"
+      rows="3"
+      placeholder="Descripción"
+      formControlName="description"
+      [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+    ></textarea>
+    @let description = restaurantForm.controls.description;
+    @if(description.errors?.['required']) {
+      <div class="invalid-feedback">La descripción es obligatoria</div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="cuisine">Cocina</label>
+    <input
+      type="text"
+      class="form-control"
+      name="cuisine"
+      id="cuisine"
+      placeholder="Cocina"
+      formControlName="cuisine"
+      [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+    />
+    @let cuisine = restaurantForm.controls.cuisine;
+    @if(cuisine.errors?.['required']) {
+      <div class="invalid-feedback">La cocina es obligatoria</div>
+    }
+  </div>
+  <p>Días de apertura</p>
+  <div class="mb-3">
+    @for(day of days; track $index; let i = $index) {
+    <div class="form-check form-check-inline" formArrayName="daysOpen">
+      <input
+        type="checkbox"
+        class="custom-control-input"
+        id="day{{ i }}"
+        [formControlName]="i"
+      />
+      <label class="custom-control-label ms-2" for="day{{ i }}">{{
+        day
+      }}</label>
+    </div>
+    }
+    @if(restaurantForm.controls.daysOpen.invalid) {
+      <div class="text-danger">Debes elegir al menos 1 día</div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="phone">Teléfono</label>
+    <input
+      type="number"
+      class="form-control"
+      id="phone"
+      name="phone"
+      placeholder="Número de teléfono"
+      formControlName="phone"
+      [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+    />
+    @let phone = restaurantForm.controls.phone;
+    @if(phone.errors?.['required']) {
+      <div class="invalid-feedback">El teléfono es obligatorio</div>
+    } @if(phone.errors?.['pattern']) {
+      <div class="invalid-feedback">El teléfono debe tener 9 dígitos</div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="image">Main photo</label>
+    <input
+      type="file"
+      class="form-control"
+      id="image"
+      name="image"
+      encodeBase64
+      (encoded)="imageBase64 = $event"
+      formControlName="image"
+      [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+    />
+    <div class="invalid-feedback">La imagen no puede estar vacía</div>
+  </div>
+  @if(imageBase64) {
+    <img [src]="imageBase64" alt="" id="imgPreview" class="img-thumbnail mb-3" />
+  }
+
+  <div>
+    <button type="submit" class="btn btn-primary" [disabled]="restaurantForm.invalid">Crear</button>
+  </div>
+</form>
