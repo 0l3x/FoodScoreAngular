@@ -1,5 +1,12 @@
 <div class="container">
-    <form action="#" id="form-login" class="mt-4" method="POST" role="form">
+      <form
+        [formGroup]="loginForm"
+        id="form-login"
+        class="mt-4"
+        method="POST"
+        role="form"
+        (submit)="login()"
+      >
       <legend>Bienvenido a FoodScore!</legend>
   
       <div class="mb-3">
@@ -10,7 +17,8 @@
           name="email"
           id="email"
           placeholder="Email"
-          required
+          formControlName="email"
+          [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
         />
       </div>
       <div class="mb-3">
@@ -21,16 +29,34 @@
           name="password"
           id="password"
           placeholder="Contraseña"
-          required
+          formControlName="password"
+          [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
         />
       </div>
-      <p class="text-danger" id="errorInfo"></p>
-      <button type="submit" [routerLink]="['/restaurants']" class="btn btn-primary">
+      <p class="text-danger" id="errorInfo">{{ errorMessage() }}</p>
+      <button type="submit" 
+        class="btn btn-primary"
+        [disabled]="loginForm.invalid">
             Login
       </button>
     </form>
-    <div>
+    <div class="mt-3">     
+
+      @defer { 
       <google-login class="btn" (login)="loggedGoogle($event)"></google-login>
+      <button
+          fbLogin
+          [scopes]="['email', 'public_profile']"
+          class="btn btn-primary"
+          (loginOk)="loggedFacebook($event)"
+          (loginError)="showError($event)"
+        >
+          <fa-icon [icon]="iconFacebook"></fa-icon>
+          Login con Facebook
+        </button>
+      }
+
+        <p>¿No tienes cuenta? <a [routerLink]="['/register']">Registrate</a></p>
     </div>
   </div>
   
