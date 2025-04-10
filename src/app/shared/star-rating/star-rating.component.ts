@@ -12,8 +12,7 @@ import { faStar as faStarFull } from '@fortawesome/free-solid-svg-icons';
 export class StarRatingComponent {
   rating = model.required<number>();
   auxRating = linkedSignal(() => this.rating());
-  modificar = input.required<boolean>();
-
+  changeRating = input.required<boolean>();
   starEmpty = faStarEmpty;
   starFull = faStarFull;
 }

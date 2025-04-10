@@ -1,5 +1,5 @@
 <div class="star-container" (mouseleave)="auxRating.set(rating())">
-  @if(modificar()){ @for (star of [1,2,3,4,5]; track star) {
+  @if(changeRating()){ @for (star of [1,2,3,4,5]; track star) {
 
   <fa-icon
     [icon]="star <= auxRating() ? starFull : starEmpty"

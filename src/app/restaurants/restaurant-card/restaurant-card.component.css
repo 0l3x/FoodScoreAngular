@@ -41,7 +41,7 @@
           width: 68px;
 
           &::before {
-              content: ' Delete ';
+              content: ' Eliminar ';
               font-size: 0.8em;
               position: relative;
               top: -1px;
@@ -72,7 +72,7 @@
       width: 68px;
 
       &::before {
-          content: ' Edit ';
+          content: ' Editar ';
           font-size: 0.8em;
           position: relative;
           top: -1px;
