@@ -4,7 +4,7 @@ import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } 
 import { Router } from '@angular/router';
 import { EncodeBase64Directive } from '../../shared/directives/encode-base64.directive';
 import { CanComponentDeactivate } from '../../shared/guards/leave-page.guard';
-import { Restaurant } from '../interfaces/restaurant';
+import { RestaurantInsert } from '../../interfaces/restaurant';
 import { RestaurantsService } from '../services/restaurants.service';
 import { ValidationClassesDirective } from '../../shared/directives/validation-classes.directive';
 import { OneCheckedDirective } from '../../shared/directives/one-checked.directive';
@@ -32,17 +32,20 @@ export class RestaurantFormComponent implements CanComponentDeactivate {
   });
 
   readonly days = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
-  add = output<Restaurant>();
+  add = output<RestaurantInsert>();
   imageBase64 = '';
   saved = false;
 
   addRestaurant() {
-    const newRestaurant: Restaurant = {
+    const newRestaurant: RestaurantInsert = {
       ...this.restaurantForm.getRawValue(),
       image: this.imageBase64,
       daysOpen: this.days
         .map((d, i) => String(i))
         .filter((i) => this.restaurantForm.value.daysOpen?.[+i]),
+      address: '',
+      lat: 0,
+      lng: 0
     };
     this.#restaurantService
       .insert(newRestaurant)

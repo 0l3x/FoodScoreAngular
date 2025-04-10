@@ -6,9 +6,16 @@
     alt=""
   />
   <div class="card-body">
-    <button class="btn btn-danger delete" (click)="deleteRestaurant()">
-      <i class="bi bi-trash"></i>
-    </button>
+    @if(restaurant().mine){
+      <button class="btn btn-warning edit" (click)="goEdit()">
+      <fa-icon [icon]="icon.faPen"></fa-icon>
+      </button>
+    }
+    @if(restaurant().mine){
+      <button class="btn btn-danger delete" (click)="openDeleteModal()">
+      <fa-icon [icon]="icon.faTrash"></fa-icon>
+      </button>
+    }
     <h4 class="card-title">
       <a [routerLink]="['/restaurants', restaurant().id]">{{
         restaurant().name
@@ -30,8 +37,19 @@
         <strong>Teléfono: </strong> {{ restaurant().phone }}
       </small>
     </div>
+    <div>
+      <small class="text-muted stars">
+        <star-rating
+          [modificar]="false"
+          [rating]="restaurant().stars"
+        ></star-rating>
+      </small>
+    </div>
   </div>
   <div class="card-footer">
     <small class="text-muted">{{ restaurant().cuisine }}</small>
+    <small class="text-muted float-end distance">
+      {{ restaurant().distance!.toFixed(1) }}km
+    </small>
   </div>
 </div>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RestaurantsResponse, SingleRestaurantResponse } from '../../interfaces/responses';
 import { map, Observable } from 'rxjs';
-import { Restaurant } from '../interfaces/restaurant';
+import { Restaurant, RestaurantInsert } from '../../interfaces/restaurant';
 
 @Injectable({
   providedIn: 'root',
@@ -41,13 +41,13 @@ export class RestaurantsService {
       .pipe(map((resp) => resp.restaurant));
   }
 
-  insert(restaurant: Restaurant) {
+  insert(restaurant: RestaurantInsert): Observable<Restaurant> {
     return this.#http
       .post<SingleRestaurantResponse>('restaurants', restaurant)
       .pipe(map((resp) => resp.restaurant));
   }
 
-  delete(id: number) {
+  delete(id: number): Observable<void> {
     return this.#http.delete<void>(`restaurants/${id}`);
   }
 }
