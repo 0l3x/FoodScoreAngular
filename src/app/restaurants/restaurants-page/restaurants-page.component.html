@@ -4,9 +4,9 @@
       type="checkbox"
       class="btn-check"
       id="show-open"
-      [(ngModel)]="onlyOpen"
+      (click)="changeOpen()"
     />
-    <label class="btn btn-outline-primary" for="show-open">Show open</label>
+    <label class="btn btn-outline-primary" for="show-open">Show open </label>
   </div>
   <form class="container-fluid mb-0 col">
     <input
@@ -24,7 +24,7 @@
   id="placesContainer"
   class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
 >
-  @for (restaurant of filteredRestaurants(); track $index) {
+  @for (restaurant of restaurants(); track $index) {
   <!-- Aún no tenemos id -->
   <restaurant-card
     [restaurant]="restaurant"
@@ -33,4 +33,13 @@
   >
   </restaurant-card>
   }
+
+  <div class="mb-4">
+    @if(moreRestaurants){
+    <button id="loadMore" class="btn btn-primary" (click)="loadMore()">
+      Mostrar más restaurantes
+    </button>
+    }
+  </div>
+
 </div>

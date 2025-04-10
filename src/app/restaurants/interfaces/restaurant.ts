@@ -1,3 +1,4 @@
+// Interfaz para el POST
 export interface Restaurant {
   id?: number;
   name: string;

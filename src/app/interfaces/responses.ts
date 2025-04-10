@@ -4,9 +4,9 @@ import { User } from "./user";
 
 export interface RestaurantsResponse {
     restaurants: Restaurant[];
-    more: boolean;
-    page: number;
     count: number;
+    page: number;
+    more: boolean;
 }
 
 export interface SingleRestaurantResponse {

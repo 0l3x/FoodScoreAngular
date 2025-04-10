@@ -1,0 +1,155 @@
+@if(profileResource.isLoading()){
+<div class="text-center size-max">Cargando el usuario</div>
+}@else{
+<div class="container">
+  <div class="row mt-4" id="profile">
+    <div class="col-3">
+      <div>
+        <img class="w-100" id="avatar" src="{{ imagen() }}" alt="" />
+        @if(profileResource.value()?.me){
+        <label class="btn btn-sm btn-danger w-auto">
+          <fa-icon [icon]="icon.faEdit"></fa-icon>
+          <input
+            type="file"
+            id="photoInput"
+            class="d-none"
+            encodeBase64
+            (encoded)="putImage($event)"
+          />
+        </label>
+        }
+      </div>
+    </div>
+
+    <div class="col-9" id="profileInfo">
+      <!--  Cambiar h4 por inputs con un botón -->
+      <h4 id="name">{{ profileResource.value()?.name }}</h4>
+      <h4 id="email">
+        <small class="text-muted">{{ profileResource.value()?.email }}</small>
+      </h4>
+      <!-- Añadir campo de modificar password que muestre 2 campos -->
+      @if(profileResource.value()?.me){
+      <div>
+        <button
+          class="btn btn-primary"
+          id="editProfile"
+          (click)="changeVisitbilityProfile()"
+        >
+          <i class="fa-regular fa-pen-to-square"></i>
+          Edit profile
+        </button>
+        <button
+          class="btn btn-success"
+          id="editPassword"
+          (click)="changeVisibilityPassword()"
+        >
+          <i class="fa-solid fa-lock"></i>
+          Edit password
+        </button>
+        <a
+          class="btn btn-outline-primary"
+          [routerLink]="['/restaurants']"
+          [queryParams]="{ creator: profileResource.value()?.id }"
+        >
+          See restaurants
+        </a>
+      </div>
+      }
+    </div>
+  </div>
+  @if(editarProfile()){
+  <div class="col-9" id="profileForm" (submit)="putProfile()">
+    <form [formGroup]="profileForm">
+      <div class="mb-3">
+        <label for="emailInput">Email:</label>
+        <input
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Email"
+          [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+        />
+        <div class="invalid-feedback">
+          El email es obligatorio y debe tener un formato correcto
+        </div>
+        <label for="nameInput">Name:</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="Name"
+          [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="profileForm.invalid"
+      >
+        Save changes
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        id="cancelEditProfile"
+        (click)="changeVisitbilityProfile()"
+      >
+        Cancel
+      </button>
+    </form>
+  </div>
+  } @if(editPassword()){
+  <div class="col-9" id="passwordForm" (submit)="putPassword()">
+    <form [formGroup]="passwordForm">
+      <div class="mb-3">
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Password"
+          [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+        />
+        <div class="invalid-feedback">Es obligatorio la contraseña</div>
+        <label for="passwordRep">Repeat password:</label>
+        @let passwordRep = passwordForm.controls.passwordRep;
+        <input
+          type="password"
+          class="form-control"
+          formControlName="passwordRep"
+          placeholder="Repeat password"
+          [class]="{
+            'is-valid': passwordRep.touched && passwordRep.valid,
+            'is-invalid': passwordRep.touched && passwordRep.invalid,
+          }"
+        />
+        <div class="invalid-feedback">Las password no coinciden</div>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="passwordForm.invalid"
+      >
+        Save changes
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        id="cancelEditPassword"
+        (click)="changeVisibilityPassword()"
+      >
+        Cancel
+      </button>
+    </form>
+  </div>
+  }
+</div>
+
+<div class="card mt-4">
+  <div class="card-header bg-success text-white" id="address">Localización</div>
+  <!-- <div id="map"></div> -->
+  <ol-map [coordinates]="coordinates()">
+    <ol-marker [coordinates]="coordinates()"></ol-marker>
+  </ol-map>
+</div>
+}

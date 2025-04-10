@@ -1,9 +1,12 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Restaurant } from '../interfaces/restaurant';
+import { Restaurant } from '../../interfaces/restaurant';
 import { RestaurantCardComponent } from '../restaurant-card/restaurant-card.component';
 import { RestaurantsService } from '../services/restaurants.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ProfileService } from '../../profile/services/profile.service';
+
 @Component({
   selector: 'restaurants-page',
   imports: [FormsModule, RestaurantCardComponent],
@@ -14,34 +17,69 @@ export class RestaurantsPageComponent {
   #restaurantService = inject(RestaurantsService);
   #detroyRef = inject(DestroyRef);
   weekDay: number = new Date().getDay();
-
   restaurants = signal<Restaurant[]>([]);
   search = signal('');
-  onlyOpen = signal(false);
+  searchDebounce = toSignal(
+    toObservable(this.search).pipe(debounceTime(600), distinctUntilChanged())
+  );
+  moreRestaurants = false;
+  page = signal(1);
+  open = signal(0);
+  creator = input<string>();
+  nombreUsuario = signal<string>('');
+  #profileService = inject(ProfileService);
 
   constructor() {
-    this.#restaurantService
-      .getAll()
-      .pipe(takeUntilDestroyed(this.#detroyRef))
-      .subscribe((res) => this.restaurants.set(res));
+    effect(() => {
+      const busqueda = this.searchDebounce();
+      untracked(() => {
+        if (busqueda === this.search() && busqueda !== '') {
+          this.page.set(1);
+        }
+      });
+    });
+
+    effect(() => {
+      if (this.creator()) {
+        this.#profileService
+          .getProfile(Number(this.creator()))
+          .pipe(takeUntilDestroyed(this.#detroyRef)) 
+          .subscribe(res => this.nombreUsuario.set(res.name));
+      } else {
+        this.nombreUsuario.set('');
+      }
+  
+      const restaurants = this.#restaurantService.getAll(
+        this.searchDebounce(),
+        this.page(),
+        this.open(),
+        this.creator() || undefined
+      );
+  
+      restaurants
+        .pipe(takeUntilDestroyed(this.#detroyRef))
+        .subscribe(res => {
+          this.restaurants.update(current => 
+            this.page() === 1 ? res.restaurants : [...current, ...res.restaurants]
+          );
+          this.moreRestaurants = res.more;
+          this.page.set(res.page);
+        });
+    });
   }
 
-  filteredRestaurants = computed(() => {
-    const searchLower = this.search().toLowerCase();
-    const filtered = this.restaurants().filter(
-      (r) =>
-        r.name.toLowerCase().includes(searchLower) ||
-        r.description.toLowerCase().includes(searchLower)
-    );
+  loadMore() {
+    this.page.update((page) => page + 1);
+  }
 
-    return this.onlyOpen()
-      ? filtered.filter((r) => r.daysOpen.includes(this.weekDay.toString()))
-      : filtered;
-  });
+  changeOpen() {
+    this.page.set(1);
+    this.open.update((open) => (open === 0 ? 1 : 0));
+  }
 
   deleteRestaurant(restaurant: Restaurant) {
     this.restaurants.update((restaurants) =>
       restaurants.filter((r) => r !== restaurant)
     );
-  }
+  } 
 }

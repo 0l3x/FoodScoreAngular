@@ -29,12 +29,12 @@
       <div class="invalid-feedback">El Email es obligatorio y debe tener un formato correcto </div>
     </div>
     <div class="mb-3">
-      <label for="email2">Repite Email: </label>
+      <label for="emailRepeat">Repite Email: </label>
       @let emailRepeatModel = registerForm.controls.emailConfirm;
       <input
         type="email"
         class="form-control"
-        id="email2"
+        id="emailRepeat"
         placeholder="Email"
         formControlName="emailConfirm"
         [class]="{

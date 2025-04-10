@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  RestaurantsResponse,
-  SingleRestaurantResponse,
-} from '../interfaces/responses';
-import { map } from 'rxjs';
+import { RestaurantsResponse, SingleRestaurantResponse } from '../../interfaces/responses';
+import { map, Observable } from 'rxjs';
 import { Restaurant } from '../interfaces/restaurant';
 
 @Injectable({
@@ -13,10 +10,29 @@ import { Restaurant } from '../interfaces/restaurant';
 export class RestaurantsService {
   #http = inject(HttpClient);
 
-  getAll() {
+  getAll(search = '',
+    page = 1,
+    open = 0,
+    creator?: string
+  ): Observable<RestaurantsResponse>{
+    let urlParams;
+    if (creator) {
+      urlParams = new URLSearchParams({
+        search: search,
+        page: page.toString(),
+        open: open.toString(),
+        creator: creator,
+      });
+    } else {
+      urlParams = new URLSearchParams({
+        search: search,
+        page: page.toString(),
+        open: open.toString(),
+      });
+    }
     return this.#http
-      .get<RestaurantsResponse>('restaurants')
-      .pipe(map((resp) => resp.restaurants));
+      .get<RestaurantsResponse>(`restaurants?${urlParams}`)
+      .pipe(map((r) => r));
   }
 
   getById(id: number) {
