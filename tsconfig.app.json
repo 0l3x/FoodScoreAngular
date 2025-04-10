@@ -4,7 +4,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": ["google.accounts", "facebook-js-sdk"]
+    "types": [
+      "google.accounts",
+      "facebook-js-sdk",
+      "@angular/localize"
+    ]
   },
   "files": [
     "src/main.ts"
