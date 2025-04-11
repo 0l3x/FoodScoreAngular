@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Restaurant } from '../../interfaces/restaurant';
@@ -26,8 +26,19 @@ export class RestaurantsPageComponent {
   page = signal(1);
   open = signal(0);
   creator = input<string>();
-  nombreUsuario = signal<string>('');
+  usuario = signal<string>('');
   #profileService = inject(ProfileService);
+  filtrado = computed(() => {
+    let filtrado = '';
+    if (this.usuario()) {
+      filtrado += ' Restaurantes creados por: ' + this.usuario() + '.';
+    }
+    if (this.search() !== '') {
+      filtrado += ' Filtrados por: ' + this.search()+ '.';
+    }
+    return (filtrado +=
+      this.open() === 1 ? ' Solo abiertos hoy' : ' Filtrado por: Todos');
+  });
 
   constructor() {
     effect(() => {
@@ -44,9 +55,9 @@ export class RestaurantsPageComponent {
         this.#profileService
           .getProfile(Number(this.creator()))
           .pipe(takeUntilDestroyed(this.#detroyRef)) 
-          .subscribe(res => this.nombreUsuario.set(res.name));
+          .subscribe(res => this.usuario.set(res.name));
       } else {
-        this.nombreUsuario.set('');
+        this.usuario.set('');
       }
   
       const restaurants = this.#restaurantService.getAll(
