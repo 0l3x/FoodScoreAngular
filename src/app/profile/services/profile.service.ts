@@ -26,14 +26,14 @@ export class ProfileService {
     return this.#http.put<void>(`${this.#profileUrl}/me`, userProfile);
   }
 
-  putPhotoEdit(userPhoto: UserPhotoEdit): Observable<void> {
-    return this.#http.put<void>(`${this.#profileUrl}/me/avatar`, userPhoto);
-  }
-  
   putPasswordEdit(userPassword: UserPasswordEdit): Observable<void> {
     return this.#http.put<void>(
       `${this.#profileUrl}/me/password`,
       userPassword
     );
   }
+
+  putPhotoEdit(userPhoto: UserPhotoEdit): Observable<void> {
+    return this.#http.put<void>(`${this.#profileUrl}/me/avatar`, userPhoto);
+  } 
 }

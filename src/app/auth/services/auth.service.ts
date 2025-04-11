@@ -15,9 +15,10 @@ export class AuthService {
   getLogged() {
     return this.#logged.asReadonly();
   }
+
   // Al hacer login, se envía la petición y se guarda el token en localStorage.
-  login (user: UserLogin): Observable<void> {
-    return this.#http.post<TokenResponse>(`${this.#authUrl}/login`, user).pipe(
+  login (data: UserLogin): Observable<void> {
+    return this.#http.post<TokenResponse>(`${this.#authUrl}/login`, data).pipe(
       map((res) => {
         this.#logged.set(true);
         localStorage.setItem('token', res.accessToken);
@@ -27,7 +28,7 @@ export class AuthService {
   }
 
   // Para el logout, se elimina el token del localStorage y se actualiza el estado.
-  logout() {
+  logout() : void {
     this.#logged.set(false);
     localStorage.removeItem('token');
   }
@@ -42,11 +43,6 @@ export class AuthService {
       return this.#http.get<Observable<boolean>>(`${this.#authUrl}/validate`).pipe(
         map(() => {
           this.#logged.set(true);
-
-          // console.log('validando token', token);
-          // console.log('validando token', this.#logged());
-          // localStorage.setItem('token', res.accessToken);
-
           return true;
         }),
         catchError(() => {

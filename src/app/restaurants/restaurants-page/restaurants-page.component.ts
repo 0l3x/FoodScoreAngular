@@ -83,7 +83,7 @@ export class RestaurantsPageComponent {
     this.page.update((page) => page + 1);
   }
 
-  changeOpen() {
+  showOpen() {
     this.page.set(1);
     this.open.update((open) => (open === 0 ? 1 : 0));
   }

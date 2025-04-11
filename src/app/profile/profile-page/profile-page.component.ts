@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faEdit } from '@fortawesome/free-regular-svg-icons';
+import { faEdit, faUser } from '@fortawesome/free-regular-svg-icons';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { EncodeBase64Directive } from '../../shared/directives/encode-base64.directive';
@@ -13,41 +13,31 @@ import { AlertModalComponent } from '../../shared/modals/alert-modal/alert-modal
 import { OlMapDirective } from '../../shared/ol-maps/ol-map.directive';
 import { OlMarkerDirective } from '../../shared/ol-maps/ol-marker.directive';
 import { sameValue } from '../../shared/validators/same-value.validator';
-import {
-  UserPasswordEdit,
-  UserPhotoEdit,
-  UserProfileEdit,
-} from '../../interfaces/user';
+import { UserPasswordEdit, UserPhotoEdit, UserProfileEdit } from '../../interfaces/user';
 import { ProfileService } from '../services/profile.service';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'profile-page',
-  imports: [
-    OlMapDirective,
-    OlMarkerDirective,
-    FaIconComponent,
-    RouterModule,
-    EncodeBase64Directive,
-    ValidationClassesDirective,
-    ReactiveFormsModule,
-  ],
+  imports: [ RouterModule, EncodeBase64Directive, ValidationClassesDirective, ReactiveFormsModule, FaIconComponent, OlMapDirective, OlMarkerDirective ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css',
 })
 export class ProfilePageComponent {
-  id = input<number | null>(null);
+  #fb = inject(FormBuilder);
+  #destroyRef = inject(DestroyRef);
+  #modalService = inject(NgbModal);
   #profileService = inject(ProfileService);
   #title = inject(Title);
   #router = inject(Router);
-  #destroyRef = inject(DestroyRef);
-  #modalService = inject(NgbModal);
-  #fb = inject(FormBuilder);
-  editarProfile = signal(false);
+  id = input<number | null>(null);
+  editProfile = signal(false);
   editPassword = signal(false);
-  coordinates = signal<[number, number]>([-0.5, 38.5]);
-  icon = { faEdit };
+  coordinates = signal<[number, number]>([0, 0]);
+  icon = { faEdit, faUser, faLock };
   imagen = signal('');
   imagenBase64 = '';
+
   profileResource = rxResource({
     loader: () =>
       this.#profileService.getProfile(this.id()!).pipe(
@@ -85,30 +75,6 @@ export class ProfilePageComponent {
         this.passwordForm.controls.passwordRep.updateValueAndValidity();
       });
   }
-  putImage(image: string) {
-    const newAvatar: UserPhotoEdit = {
-      avatar: image,
-    };
-    console.log(newAvatar);
-    this.#profileService
-      .putPhotoEdit(newAvatar)
-      .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe({
-        next: () => {
-          this.openAlertModa(
-            'Imagen Cambiada',
-            'La imagen ha sido cambiada a la nueva'
-          );
-          this.imagen.set(image);
-        },
-        error: (e) => {
-          this.openAlertModa(
-            'Error al cambiar la imagen',
-            'Error en la subida de la imagen porfavor intentalo más tarde' + e
-          );
-        },
-      });
-  }
 
   putPassword() {
     const newPassword: UserPasswordEdit = {
@@ -119,17 +85,17 @@ export class ProfilePageComponent {
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
         next: () => {
-          this.openAlertModa(
-            'Contraseña cambiada',
-            'La contraseña se ha cambiado'
+          this.openAlertModal(
+            'Contraseña actualizada',
+            'La contraseña ha sido actualizada correctamente'
           );
           this.passwordForm.reset();
           this.changeVisibilityPassword();
         },
-        error: (e) => {
-          this.openAlertModa(
-            'Contraseña no ha sido cambiada',
-            'La contraseña no se ha podido cambiase ' + e
+        error: () => {
+          this.openAlertModal(
+            'Error al actualizar la contraseña',
+            'Ha habido un error al actualizar la contraseña'
           );
         },
       });
@@ -145,43 +111,61 @@ export class ProfilePageComponent {
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
         next: () => {
-          this.openAlertModa(
-            'El perfil se ha cambiado',
-            'El perfil se ha cambiado perfectamente'
+          this.openAlertModal(
+            'Perfil actualizado',
+            'El perfil ha sido actualizado correctamente'
           );
           this.profileForm.reset();
-          this.changeVisitbilityProfile();
+          this.changeVisibilityProfile();
           this.profileResource.reload();
         },
-        error: (e) => {
-          this.openAlertModa(
-            'El perfil no se ha cambiado',
-            'El perfil no se ha podido cambiar: ' + e
+        error: () => {
+          this.openAlertModal(
+            'Error al actualizar el perfil',
+            'Ha habido un error al actualizar el perfil'
+          );
+        },
+      });
+  }
+  
+  putImage(image: string) {
+    const newAvatar: UserPhotoEdit = {
+      avatar: image,
+    };
+    console.log(newAvatar);
+    this.#profileService
+      .putPhotoEdit(newAvatar)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe({
+        next: () => {
+          this.openAlertModal(
+            'Avatar actualizado',
+            'El avatar ha sido actualizado correctamente'
+          );
+          this.imagen.set(image);
+        },
+        error: () => {
+          this.openAlertModal(
+            'Error al actualizar el avatar',
+            'Error en la actualización del avatar'
           );
         },
       });
   }
 
-  openAlertModa(title: string, body: string) {
+  openAlertModal(title: string, body: string) {
     const modalRef = this.#modalService.open(AlertModalComponent);
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.body = body;
   }
 
-  changeVisitbilityProfile() {
-    this.editarProfile.update((e) => !e);
-    console.log(this.editarProfile());
+  changeVisibilityProfile() {
+    this.editProfile.update((e) => !e);
     this.profileForm.reset();
   }
+
   changeVisibilityPassword() {
     this.editPassword.update((e) => !e);
-    console.log(this.editPassword());
     this.passwordForm.reset();
-  }
-
-  imageSubida = signal<Event | null>(null);
-
-  useCropper(event: Event) {
-    this.imageSubida.set(event);
   }
 }
