@@ -48,7 +48,7 @@ export class RestaurantFormComponent implements CanComponentDeactivate {
   coordinates = signal<[number, number]>([0, 0]);
   id = input<number>();
   #title = inject(Title);
-  postActivate = signal(false);
+  postMode = signal(false);
   #modalService = inject(NgbModal);
 
   restaurantResource = rxResource({
@@ -106,9 +106,9 @@ export class RestaurantFormComponent implements CanComponentDeactivate {
             this.restaurantResource.value()!.lat,
           ],
         });
-        this.postActivate.set(false);
+        this.postMode.set(false);
       } else {
-        this.postActivate.set(true);
+        this.postMode.set(true);
       }
     });
   }
@@ -126,7 +126,7 @@ export class RestaurantFormComponent implements CanComponentDeactivate {
       phone: this.restaurantForm.controls.phone.value.toString(),
     };
 
-    if (this.restaurantResource.value()) {
+    if (this.restaurantResource.value()) { // para editar
       this.#restaurantService
         .putRestaurant(newRestaurant, this.restaurantResource.value()!.id)
         .pipe(takeUntilDestroyed(this.#destroyRef))
@@ -139,7 +139,7 @@ export class RestaurantFormComponent implements CanComponentDeactivate {
             ]);
           }
         });
-    } else {
+    } else { // insert
       this.#restaurantService
         .insert(newRestaurant)
         .pipe(takeUntilDestroyed(this.#destroyRef))

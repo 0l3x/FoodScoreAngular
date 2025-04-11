@@ -116,12 +116,8 @@
   </div>
 
   <div>
-    <button type="submit" class="btn btn-primary mt-5" [disabled]="restaurantForm.invalid && postActivate()">
+    <button type="submit" class="btn btn-primary mt-5" [disabled]="restaurantForm.invalid && postMode()">
       {{ this.restaurantResource.value() ? "Guardar cambios" : "Crear" }}
     </button>
   </div>
-
-  <!-- <div>
-    <button type="submit" class="btn btn-primary" [disabled]="restaurantForm.invalid">Crear</button>
-  </div> -->
 </form>
