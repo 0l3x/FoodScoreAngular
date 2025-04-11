@@ -100,11 +100,28 @@
     />
     <div class="invalid-feedback">La imagen no puede estar vacía</div>
   </div>
+
   @if(imageBase64) {
     <img [src]="imageBase64" alt="" id="imgPreview" class="img-thumbnail mb-3" />
   }
 
-  <div>
-    <button type="submit" class="btn btn-primary" [disabled]="restaurantForm.invalid">Crear</button>
+  <div class="mb-3">
+    <ol-map [coordinates]="coordinates()">
+      <ga-autocomplete
+        class="autocomplete-container"
+        (locationChange)="markPlace($event)"
+      ></ga-autocomplete>
+      <ol-marker [coordinates]="coordinates()"></ol-marker>
+    </ol-map>
   </div>
+
+  <div>
+    <button type="submit" class="btn btn-primary mt-5" [disabled]="restaurantForm.invalid && postActivate()">
+      {{ this.restaurantResource.value() ? "Guardar cambios" : "Crear" }}
+    </button>
+  </div>
+
+  <!-- <div>
+    <button type="submit" class="btn btn-primary" [disabled]="restaurantForm.invalid">Crear</button>
+  </div> -->
 </form>

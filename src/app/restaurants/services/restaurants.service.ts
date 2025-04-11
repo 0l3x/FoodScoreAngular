@@ -36,7 +36,7 @@ export class RestaurantsService {
       .pipe(map((r) => r));
   }
 
-  getById(id: number) {
+  getById(id: number): Observable<Restaurant> {
     return this.#http
       .get<SingleRestaurantResponse>(`restaurants/${id}`)
       .pipe(map((resp) => resp.restaurant));
@@ -64,5 +64,11 @@ export class RestaurantsService {
         `restaurants/${id}/comments`,
         comment
       ).pipe(map((res) => res.comment));
+  }
+
+  putRestaurant(restaurant: RestaurantInsert, id: number): Observable<Restaurant> {
+    return this.#http
+      .put<Restaurant>(`restaurants/${id}`, restaurant)
+      .pipe(map((res) => res));
   }
 }

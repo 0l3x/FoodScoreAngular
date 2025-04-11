@@ -25,6 +25,16 @@ export const restaurantsRoutes = [
     loadComponent: () =>
       import('./restaurant-details/restaurant-details.component').then(
         (m) => m.RestaurantDetailsComponent
-      ),
+      )
+  },
+  {
+    path: 'edit/:id',
+    canActivate: [numericIdGuard],
+    canDeactivate: [leavePageGuard],
+    title: 'Editar Restaurante | FoodScore',
+    loadComponent: () =>
+      import('./restaurant-form/restaurant-form.component').then(
+        (m) => m.RestaurantFormComponent
+      )
   },
 ];

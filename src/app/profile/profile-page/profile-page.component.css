@@ -83,7 +83,7 @@ label.imgEdit{
         border-radius: 12px;
         padding-left: 8px;
         padding-right: 8px;
-        width: 130px;
+        width: 95%;
   
         &::before {
             content: ' Cambiar avatar ';

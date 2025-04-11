@@ -43,7 +43,6 @@ export class ProfilePageComponent {
       this.#profileService.getProfile(this.id()!).pipe(
         tap((r) => {
           this.#title.setTitle(r.name + ' | FoodScore');
-          console.log(r);
           this.coordinates.set([r.lng, r.lat]);
           this.imagen.set(r.avatar);
         }),
@@ -132,7 +131,6 @@ export class ProfilePageComponent {
     const newAvatar: UserPhotoEdit = {
       avatar: image,
     };
-    console.log(newAvatar);
     this.#profileService
       .putPhotoEdit(newAvatar)
       .pipe(takeUntilDestroyed(this.#destroyRef))
