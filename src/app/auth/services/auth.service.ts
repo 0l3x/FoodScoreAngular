@@ -22,7 +22,7 @@ export class AuthService {
       map((res) => {
         this.#logged.set(true);
         localStorage.setItem('token', res.accessToken);
-        console.log('Token recibido:', res.accessToken);
+        //console.log('Token recibido:', res.accessToken);
       })
     );
   }
